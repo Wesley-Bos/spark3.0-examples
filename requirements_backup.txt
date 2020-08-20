@@ -1,4 +1,0 @@
-pandas
-sqlalchemy
-kafka-python
-findspark
