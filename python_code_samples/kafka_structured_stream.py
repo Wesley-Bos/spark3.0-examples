@@ -6,7 +6,8 @@ if __name__ == "__main__":
     spark = SparkSession \
         .builder \
         .appName("wordCounter").getOrCreate()
-
+    
+    # Read the data from kafka
     df = spark \
         .readStream \
         .format("kafka") \
@@ -14,23 +15,33 @@ if __name__ == "__main__":
         .option("subscribe", "pxl_data") \
         .option("startingOffsets", "earliest") \
         .load()
-
-    df.printSchema()
-
-    personStringDF = df.selectExpr("CAST(value AS STRING)")
+    
+    # Print out the dataframa schema
+    #df.printSchema()
+    
+    # Convert the datatype for value to a string
+    string_df = df.selectExpr("CAST(value AS STRING)")
+    
+    # Print out the new dataframa schema
+    #string_df.printSchema()
+    
+    # Create a schema for the df
     schema = StructType([
         StructField("id", StringType()),
         StructField("number", StringType())
         ])
-    personStringDF.printSchema()
+    
+    # Select the data present in the column value and apply the schema on it
+    json_df = string_df.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
+    
+    # Print out the dataframa schema
+    #json_df.printSchema()
+    
+    # Write output to the terminal
+    #json_df.writeStream.format("console").outputMode("append").start().awaitTermination()
 
-    df_json = personStringDF.withColumn("jsonData", from_json(col("value"), schema)).select("jsondata.*")
-    df_json.printSchema()
-    # output to terminal
-    #df_json.writeStream.format("console").outputMode("append").start().awaitTermination()
-
-    #output kafka topic
-    df_json.selectExpr("id AS key", "to_json(struct(*)) AS value")\
+    # Write output to kafka topic
+    json_df.selectExpr("id AS key", "to_json(struct(*)) AS value")\
             .writeStream\
             .format("kafka")\
             .outputMode("append")\
