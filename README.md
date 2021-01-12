@@ -1,6 +1,9 @@
 # Spark_3.0-examples
 View my [blog post](https://medium.com/@wesleybos99/structured-streaming-in-spark-3-0-using-kafka-db44cf871d7a?sk=5bd6d88ac86bf0f5489e97549170ebab) to get started with Apache Spark. This readme only covers the setup phases. To get a more extensive explanation, view the article.
 
+# NOTE: Currently there is a problem with the 'psycopg2' package which I think also causes problems with a package used in the 'Spark structured streaming'. This seems to be only recently. I will look into solving this issue but know that I don't have the time to actively work on this project. (12/01/2021)
+*The normal Spark shell still works so one can use that if desired.*
+
 **Prerequisites**
 * This project uses Docker and docker-compose. View [this link](https://docs.docker.com/compose/install/) to find out how to install them for your OS.
 
